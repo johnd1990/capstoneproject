@@ -12,6 +12,7 @@ This is a simple React-based e-commerce application that allows users to view a 
 
 ## To-do List
 
+- Change API fetching from component to app level
 - Styling
 - Log out
 - Shopping Cart
