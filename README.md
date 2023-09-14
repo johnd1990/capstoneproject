@@ -1,4 +1,4 @@
-# Capstone Project: React E-commerce App
+# Capstone Project: "Not Amazon"
 
 This is a simple React-based e-commerce application that allows users to view a list of products, view product details, log in, and register.
 
