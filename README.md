@@ -1,8 +1,22 @@
-# React + Vite
+# Capstone Project: "Not Amazon"
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a simple React-based e-commerce application that allows users to view a list of products, view product details, log in, and register.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- View a list of products.
+- View detailed information about each product.
+- Log in to the application.
+- Register a new account.
+- ...
+
+## To-do List
+
+- Change API fetching from component to app level
+- Styling
+- Log out
+- Shopping Cart
+- Sort Products
+- Filter Products
+
+## Getting Started
