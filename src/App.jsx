@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Registration from "./components/Registration";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
+import { fetchProducts } from "./api/api";
 
 import "./App.css";
 
@@ -56,7 +57,11 @@ function App() {
 
         <Routes>
           {/* Route for displaying product details */}
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route
+            path="/product/:id"
+            element={<ProductDetail products={products} />}
+          />
+
 
           {/* Default route for displaying the product list */}
           <Route

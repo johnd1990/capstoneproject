@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import "./ProductList.css";
 
 function ProductList({ products }) {
   return (
-    <div>
+    <div className="product-list-container">
       {products.map((product) => (
-        <div key={product.id}>
-          <Link to={`/product/${product.id}`}>
-            <h3>{product.title}</h3>
+        <div key={product.id} className="product-card">
+          <Link to={`/product/${product.id}`} className="product-link">
+            <h3 className="product-title">{product.title}</h3>
           </Link>
-          <p>Price: ${product.price}</p>
+          <p className="product-price">Price: ${product.price}</p>
           {/* Display the product image */}
-          <img src={product.image} alt={product.title} />
+          <img
+            src={product.image}
+            alt={product.title}
+            className="product-image"
+          />
           {/* Add other product information as needed */}
         </div>
       ))}

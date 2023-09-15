@@ -1,0 +1,28 @@
+.product-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+    width: 250px;
+    height: 350px;
+}
+
+.product-title {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.product-price {
+    font-weight: bold;
+}
+
+.product-image {
+    max-width: 80%;
+    max-height: 200px;
+    height: auto;
+}
