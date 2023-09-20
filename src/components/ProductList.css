@@ -1,28 +1,34 @@
 .product-list-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.sort-filter-container {
+  width: 100%; /* Make the sort/filter container take the full width */
+  justify-content: space-between;
+  margin-bottom: 10px; /* Add some space between sort/filter and product list */
 }
 
 .product-card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px;
-    width: 250px;
-    height: 350px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px;
+  width: 250px;
+  height: 350px;
 }
 
 .product-title {
-    font-size: 1rem;
-    margin: 0;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .product-price {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .product-image {
-    max-width: 80%;
-    max-height: 200px;
-    height: auto;
+  max-width: 80%;
+  max-height: 200px;
+  height: auto;
 }

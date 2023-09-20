@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function Login() {
-  // State variables to store login data and messages
+function Login({ onLogin, onLogout }) {
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   });
 
-  const [loginMessage, setLoginMessage] = useState(""); // To store login success/failure message
+  const [loginMessage, setLoginMessage] = useState(null);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
-  // Function to handle input changes and update loginData
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setIsUserLoggedIn(true);
+    }
+  }, []);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setLoginData((prevData) => ({
@@ -18,70 +24,88 @@ function Login() {
     }));
   };
 
-  // Function to handle login submission
   const handleLogin = async () => {
     try {
-      const response = await fetch("https://fakestoreapi.com/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      });
+      if (isUserLoggedIn) {
+        console.log("You are already logged in.");
+        return;
+      }
 
-      // Check the response status code to determine login success or failure
-      if (response.status === 200) {
+      const response = await onLogin(loginData);
+
+      if (response.ok) {
         const data = await response.json();
         console.log("Login successful! Token:", data.token);
-        setLoginMessage("Login Successful"); // Set success message
-        // Handle successful login
+        setLoginMessage("Login successful!");
+        setIsUserLoggedIn(true);
+        localStorage.setItem("user", JSON.stringify(loginData));
       } else {
         console.error("Login failed");
-        setLoginMessage("Login Failed"); // Set failure message
-        // Handle login failure
+        setLoginMessage("Login failed. Please check your credentials.");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setLoginMessage("Login Failed"); // Set failure message for network or other errors
-      // Handle any network or other errors here.
+      setLoginMessage("An error occurred during login.");
     }
   };
 
-  // Render the Login component
+  const handleLogout = () => {
+    setIsUserLoggedIn(false);
+    localStorage.removeItem("user");
+    if (onLogout) {
+      onLogout();
+    }
+    setLoginMessage("Logout successful");
+  };
+
   return (
     <div>
       <h2>Login</h2>
-      {loginMessage && (
-        // Display a message based on the login success/failure status
-        <p
-          className={loginMessage === "Login Successful" ? "success" : "error"}
-        >
-          {loginMessage}
-        </p>
+      {isUserLoggedIn ? (
+        <>
+          <button onClick={handleLogout}>Logout</button>
+          <p>{loginMessage}</p>
+        </>
+      ) : (
+        <form>
+          <div>
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={loginData.username}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label>Password:</label>
+            <input
+              type="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleInputChange}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
+            {isUserLoggedIn ? "Logged In" : "Login"}
+          </button>
+          {loginMessage && (
+            <p
+              className={
+                loginMessage.includes("successful") ? "success" : "error"
+              }
+            >
+              {loginMessage}
+            </p>
+          )}
+        </form>
       )}
-      <form>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={loginData.username}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={loginData.password}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button type="button" onClick={handleLogin}>
-          Login
-        </button>
-      </form>
     </div>
   );
 }
