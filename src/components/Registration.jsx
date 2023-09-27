@@ -1,3 +1,4 @@
+// Registration.jsx
 import React, { useState } from "react";
 
 function Registration() {

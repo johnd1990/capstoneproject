@@ -1,72 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
 import ProductList from "./components/ProductList";
 import ProductDetail from "./components/ProductDetail";
 import ShoppingCart from "./components/ShoppingCart";
-import Checkout from "./components/Checkout";
+import ProductSearchBar from "./components/ProductSearchBar";
+import NavigationBar from "./components/NavigationBar";
 import { fetchProducts, login } from "./api/api";
 import "./App.css";
 
 function App() {
-  const [activeTab, setActiveTab] = useState("login");
+  const [originalProducts, setOriginalProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(
     JSON.parse(localStorage.getItem("cart")) || []
   );
   const [showAddedToCartMessage, setShowAddedToCartMessage] = useState(false);
-  const [sortOption, setSortOption] = useState("alphabetical_asc");
-  const [filterOption, setFilterOption] = useState("");
+  const [sortOption] = useState("alphabetical_asc");
+  const [filterOption] = useState("");
+  const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
+  const [minPrice] = useState(""); // State for minPrice
+  const [maxPrice] = useState(""); // State for maxPrice
+  const [cartQuantity, setCartQuantity] = useState(0);
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab === activeTab ? "" : tab);
-  };
+  useEffect(() => {
+    fetchProducts(sortOption, filterOption, minPrice, maxPrice)
+      .then((data) => {
+        setOriginalProducts(data); // Store the original products
+        setProducts(data); // Initialize the products state with the original list
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Calculate the total quantity in the cart
+    const totalQuantity = cart.reduce(
+      (total, product) => total + product.quantity,
+      0
+    );
+    setCartQuantity(totalQuantity);
+  }, [cart, sortOption, filterOption, minPrice, maxPrice]);
 
   const handleLogin = async (loginData) => {
     try {
       const response = await login(loginData);
-      return response;
+      if (response.ok) {
+        setIsLoginSuccessful(true); // Set login success state
+        return response;
+      } else {
+        console.error("Login failed");
+        throw new Error("Login failed");
+      }
     } catch (error) {
       console.error("Error during login:", error);
       throw error;
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("https://fakestoreapi.com/products");
-      const data = await response.json();
-
-      // Apply sorting
-      if (sortOption === "price_asc") {
-        data.sort((a, b) => a.price - b.price);
-      } else if (sortOption === "price_desc") {
-        data.sort((a, b) => b.price - a.price);
-      } else if (sortOption === "alphabetical_asc") {
-        data.sort((a, b) => a.title.localeCompare(b.title));
-      } else if (sortOption === "alphabetical_desc") {
-        data.sort((a, b) => b.title.localeCompare(a.title));
-      }
-
-      // Apply filtering
-      let filteredData = data;
-      if (filterOption !== "") {
-        filteredData = data.filter((product) =>
-          product.category.toLowerCase().includes(filterOption.toLowerCase())
-        );
-      }
-
-      setProducts(filteredData);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setIsLoginSuccessful(false);
   };
-
-  useEffect(() => {
-    fetchData();
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
 
   const addToCart = (product) => {
     const updatedCart = [...cart];
@@ -81,7 +85,6 @@ function App() {
     }
 
     setCart(updatedCart);
-    setActiveTab("products");
     setShowAddedToCartMessage(true);
     setTimeout(() => setShowAddedToCartMessage(false), 3000);
   };
@@ -91,70 +94,92 @@ function App() {
     setCart(updatedCart);
   };
 
-  // Callback function to handle sorting
-  const handleSortChange = (option) => {
-    setSortOption(option);
-  };
-
-  // Callback function to handle filtering
-  const handleFilterChange = (option) => {
-    setFilterOption(option);
+  const handleSearch = (query) => {
+    // Perform filtering based on the search query on the original products list
+    const filteredProducts = originalProducts.filter(
+      (product) =>
+        product.title.toLowerCase().includes(query.toLowerCase()) ||
+        product.category.toLowerCase().includes(query.toLowerCase())
+    );
+    setProducts(filteredProducts);
   };
 
   return (
     <Router>
+      <div className="banner">
+        <img
+          src="https://imgix.ranker.com/user_node_img/50056/1001102891/original/zamazon-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=650"
+          alt="Banner Image"
+          className="banner-image"
+        />
+      </div>
       <div className="App">
-        <div className="tab-buttons">
-          <Link
-            to="/"
-            className={`nav-button ${
-              activeTab === "home" ? "active" : ""
-            } home-link`}
-          >
-            Home
-          </Link>
-          <button onClick={() => handleTabChange("login")}>Account</button>
-          <button onClick={() => handleTabChange("registration")}>
-            Registration
-          </button>
-          <button onClick={() => handleTabChange("products")}>
-            Shopping Cart
-          </button>
+        {/* First Row: Navigation Links */}
+        <div className="nav-row">
+          <NavigationBar cartQuantity={cartQuantity} />
           {showAddedToCartMessage && <div>Added to Cart!</div>}
         </div>
-        {activeTab === "home" && (
-          <div className="product-list">
-            <h2>Products</h2>
-            <ProductList products={products} onAddToCart={addToCart} />
-          </div>
-        )}
-        {activeTab === "login" && <Login /> && <Login onLogin={handleLogin} />}
-        {activeTab === "registration" && <Registration />}
-        {activeTab === "products" && (
-          <ShoppingCart cart={cart} removeFromCart={removeFromCart} />
-        )}
+
+        {/* Second Row: Search Bar and Filters */}
+        <div className="search-row">
+          <ProductSearchBar onSearch={handleSearch} />
+          {/* Add the SortFilter component here */}
+        </div>
         <Routes>
           <Route
-            path="/product/:id"
-            element={<ProductDetail products={products} />}
+            path="/login"
+            element={
+              <Login
+                onLogin={handleLogin}
+                onLogout={handleLogout} // Pass the logout handler to Login
+              />
+            }
           />
           <Route
             path="/"
             element={
-              <div className="product-list">
-                <h2>Products</h2>
-                <ProductList products={products} onAddToCart={addToCart} />
-              </div>
+              <ProductList products={products} onAddToCart={addToCart} />
             }
           />
           <Route
-            path="/checkout"
-            element={<Checkout cart={cart} removeFromCart={removeFromCart} />}
+            path="/shopping-cart" // Updated path
+            element={
+              <ShoppingCart cart={cart} removeFromCart={removeFromCart} />
+            } // Updated element
+          />
+          <Route path="/registration" element={<Registration />} />
+          {!isLoginSuccessful && (
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          )}
+          {/* Redirect to home page if no matching route */}
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
+          <Route
+            path="/product/:id"
+            element={
+              <ProductDetail products={products} addToCart={addToCart} />
+            }
           />
         </Routes>
       </div>
     </Router>
   );
 }
+
+// function LoginSuccess({ setIsLoginSuccessful }) {
+//   useEffect(() => {
+//     const timeout = setTimeout(() => {
+//       setIsLoginSuccessful(false); // Redirect back to home page
+//     }, 1000); // Redirect after 1 second
+
+//     // Cleanup the timeout when unmounting
+//     return () => clearTimeout(timeout);
+//   }, [setIsLoginSuccessful]);
+
+//   return (
+//     <div className="login-success">
+//       <h2>Login Successful! Redirecting...</h2>
+//     </div>
+//   );
+// }
 
 export default App;

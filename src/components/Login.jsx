@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login({ onLogin, onLogout }) {
   const [loginData, setLoginData] = useState({
@@ -6,15 +7,10 @@ function Login({ onLogin, onLogout }) {
     password: "",
   });
 
-  const [loginMessage, setLoginMessage] = useState(null);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setIsUserLoggedIn(true);
-    }
-  }, []);
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -24,50 +20,56 @@ function Login({ onLogin, onLogout }) {
     }));
   };
 
-  const handleLogin = async () => {
-    try {
-      if (isUserLoggedIn) {
-        console.log("You are already logged in.");
-        return;
-      }
+  const handleLogin = async (event) => {
+    event.preventDefault(); // Prevent the default form submission
 
+    try {
       const response = await onLogin(loginData);
 
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful! Token:", data.token);
-        setLoginMessage("Login successful!");
-        setIsUserLoggedIn(true);
+        setIsLoginSuccessful(true); // Ensure this is setting isLoginSuccessful to true
+        setIsLoginFailed(false);
         localStorage.setItem("user", JSON.stringify(loginData));
+
+        // Navigate to the home page immediately after successful login
+        navigate("/");
       } else {
         console.error("Login failed");
-        setLoginMessage("Login failed. Please check your credentials.");
+        setIsLoginSuccessful(false);
+        setIsLoginFailed(true);
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setLoginMessage("An error occurred during login.");
+      setIsLoginSuccessful(false);
+      setIsLoginFailed(true);
     }
   };
 
   const handleLogout = () => {
-    setIsUserLoggedIn(false);
     localStorage.removeItem("user");
     if (onLogout) {
       onLogout();
     }
-    setLoginMessage("Logout successful");
+    setIsLoginSuccessful(false);
+    // Navigate to the login page after logout
+    navigate("/login");
   };
+  
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setIsLoginSuccessful(true);
+    }
+  }, []);
 
   return (
     <div>
       <h2>Login</h2>
-      {isUserLoggedIn ? (
-        <>
-          <button onClick={handleLogout}>Logout</button>
-          <p>{loginMessage}</p>
-        </>
-      ) : (
-        <form>
+      {!isLoginSuccessful ? (
+        <form onSubmit={handleLogin}>
           <div>
             <label>Username:</label>
             <input
@@ -75,6 +77,7 @@ function Login({ onLogin, onLogout }) {
               name="username"
               value={loginData.username}
               onChange={handleInputChange}
+              autoComplete="username"
             />
           </div>
           <div>
@@ -84,27 +87,20 @@ function Login({ onLogin, onLogout }) {
               name="password"
               value={loginData.password}
               onChange={handleInputChange}
+              autoComplete="current-password"
             />
           </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              handleLogin();
-            }}
-          >
-            {isUserLoggedIn ? "Logged In" : "Login"}
-          </button>
-          {loginMessage && (
-            <p
-              className={
-                loginMessage.includes("successful") ? "success" : "error"
-              }
-            >
-              {loginMessage}
+          <button type="submit">Login</button>
+          {isLoginFailed && (
+            <p className="error">
+              Login Failed. Please check your credentials.
             </p>
           )}
         </form>
+      ) : (
+        <>
+          <button onClick={handleLogout}>Logout</button>
+        </>
       )}
     </div>
   );

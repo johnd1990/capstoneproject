@@ -1,44 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./ProductList.css";
-import SortFilter from "./SortFilter"; // Import the SortFilter component
+import SortFilter from "./SortFilter";
 
 function ProductList({ products, onAddToCart }) {
   const [sortedProducts, setSortedProducts] = useState([]);
   const [sortOption, setSortOption] = useState("alphabetical_asc");
   const [filterOption, setFilterOption] = useState("");
+  const [minPrice, setMinPrice] = useState(""); // State for minPrice
+  const [maxPrice, setMaxPrice] = useState(""); // State for maxPrice
 
-  useEffect(() => {
-    // Sort products based on sortOption
-    const sorted = [...products].sort((a, b) => {
-      if (sortOption === "alphabetical_asc") {
-        return a.title.localeCompare(b.title);
-      } else if (sortOption === "alphabetical_desc") {
-        return b.title.localeCompare(a.title);
-      } else if (sortOption === "price_asc") {
-        return a.price - b.price;
-      } else if (sortOption === "price_desc") {
-        return b.price - a.price;
-      }
-    });
-
-    // Filter products based on filterOption
-    const filtered = sorted.filter((product) => {
-      if (!filterOption) {
-        return true; // Show all products when no filter is applied
-      }
-      return product.category === filterOption;
-    });
-
-    setSortedProducts(filtered);
-  }, [products, sortOption, filterOption]);
-
+  // Define handleSortChange function
   const handleSortChange = (sort) => {
     setSortOption(sort);
   };
 
-  const handleFilterChange = (filter) => {
-    setFilterOption(filter);
+  useEffect(() => {
+    // Sort products based on the provided props
+    let sortedProductsCopy = [...products];
+
+    // Apply sorting
+    if (sortOption === "alphabetical_asc") {
+      sortedProductsCopy.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortOption === "alphabetical_desc") {
+      sortedProductsCopy.sort((a, b) => b.title.localeCompare(a.title));
+    } else if (sortOption === "price_asc") {
+      sortedProductsCopy.sort((a, b) => a.price - b.price);
+    } else if (sortOption === "price_desc") {
+      sortedProductsCopy.sort((a, b) => b.price - a.price);
+    }
+
+    // Apply category filter
+    if (filterOption) {
+      sortedProductsCopy = sortedProductsCopy.filter(
+        (product) => product.category === filterOption
+      );
+    }
+
+    // Apply price range filtering
+    if (minPrice !== "" && maxPrice !== "") {
+      sortedProductsCopy = sortedProductsCopy.filter(
+        (product) =>
+          product.price >= parseFloat(minPrice) &&
+          product.price <= parseFloat(maxPrice)
+      );
+    }
+
+    setSortedProducts(sortedProductsCopy);
+  }, [products, sortOption, filterOption, minPrice, maxPrice]);
+
+  const handleFilterChange = (option) => {
+    setFilterOption(option);
+  };
+
+  const handlePriceRangeChange = (min, max) => {
+    setMinPrice(min);
+    setMaxPrice(max);
   };
 
   return (
@@ -46,6 +63,9 @@ function ProductList({ products, onAddToCart }) {
       <SortFilter
         onSortChange={handleSortChange}
         onFilterChange={handleFilterChange}
+        onPriceRangeChange={handlePriceRangeChange}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
       />
       {sortedProducts.map((product) => (
         <div key={product.id} className="product-card">
@@ -64,5 +84,4 @@ function ProductList({ products, onAddToCart }) {
     </div>
   );
 }
-
 export default ProductList;

@@ -1,4 +1,4 @@
-# Capstone Project: "Not Amazon"
+# Capstone Project: "Zamazon"
 
 This is a simple React-based e-commerce application that allows users to view a list of products, view product details, log in, and register.
 
@@ -15,6 +15,8 @@ This is a simple React-based e-commerce application that allows users to view a 
 - Remove from cart.
 - View cart.
 - Cart checkout.
+- Price range filter.
+- Search bar.
 - ...
 
 ## To-do List
