@@ -1,5 +1,5 @@
-// Registration.jsx
 import React, { useState } from "react";
+import "../styles/Registration.css";
 
 function Registration() {
   // State variable to store registration data
@@ -54,13 +54,12 @@ function Registration() {
 
   // Render the Registration component
   return (
-    <div>
-      <h2>Registration</h2>
+    <div className="registration-container">
+      <h2 className="registration-heading">Registration</h2>
       {registrationStatus === "success" && (
-        // Display a success message if registration was successful
-        <p style={{ color: "green" }}>Registration Successful!</p>
+        <p className="registration-success">Registration Successful!</p>
       )}
-      <form>
+      <form className="registration-form">
         <div>
           <label>Email:</label>
           <input
@@ -88,8 +87,7 @@ function Registration() {
             onChange={handleInputChange}
           />
         </div>
-        {/* Registration form fields */}
-        <button type="button" onClick={handleRegistration}>
+        <button type="button" onClick={handleRegistration} className="registration-button">
           Register
         </button>
       </form>

@@ -5,9 +5,9 @@
 }
 
 .sort-filter-container {
-  width: 100%; /* Make the sort/filter container take the full width */
+  width: 100%;
   justify-content: space-between;
-  margin-bottom: 10px; /* Add some space between sort/filter and product list */
+  margin-bottom: 10px;
 }
 
 .product-card {
@@ -22,9 +22,9 @@
 }
 
 .product-card:hover {
-  background-color: #f9f9f9; /* Change the background color on hover */
-  transform: scale(1.05); /* Increase the size slightly on hover */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow on hover */
+  background-color: #f9f9f9;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .product-title {

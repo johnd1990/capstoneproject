@@ -40,7 +40,8 @@ li {
 }
 
 .nav-row:hover {
-  background-color: #445657; /* Change the background color on hover */
+  background-color: #445657;
+  /* Change the background color on hover */
 }
 
 .nav-button {
@@ -48,11 +49,13 @@ li {
   color: #fff;
   margin: 0 20px;
   font-weight: bold;
-  transition: color 0.3s; /* Add a transition for text color change on hover */
+  transition: color 0.3s;
+  /* Add a transition for text color change on hover */
 }
 
 .nav-button:hover {
-  color: #ffcc00; /* Change the text color on hover */
+  color: #ffcc00;
+  /* Change the text color on hover */
 }
 
 .home-link {
@@ -66,11 +69,13 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Ensure it spans the full width */
+  width: 100%;
+  /* Ensure it spans the full width */
 }
 
 .product-search {
-  overflow: auto; /* Display scrollbars when content overflows */
+  overflow: auto;
+  /* Display scrollbars when content overflows */
   display: flex;
   align-items: center;
 }
@@ -97,7 +102,8 @@ li {
 }
 
 .product-search button:hover {
-  color: #ffcc00; /* Change the text color on hover */
+  color: #ffcc00;
+  /* Change the text color on hover */
 }
 
 /* Style for Sort and Filter dropdowns */
@@ -117,4 +123,3 @@ select {
   border-radius: 5px;
   margin: 5px;
 }
-

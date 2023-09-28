@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./ProductList.css";
+import "../styles/ProductList.css";
 import SortFilter from "./SortFilter";
 
 function ProductList({ products, onAddToCart }) {

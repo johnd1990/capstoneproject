@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
 
 function Login({ onLogin, onLogout }) {
   const [loginData, setLoginData] = useState({
@@ -56,7 +57,7 @@ function Login({ onLogin, onLogout }) {
     // Navigate to the login page after logout
     navigate("/login");
   };
-  
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -67,9 +68,9 @@ function Login({ onLogin, onLogout }) {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2 className="login-heading">Login</h2> {/* Add the login-heading class */}
       {!isLoginSuccessful ? (
-        <form onSubmit={handleLogin}>
+        <form className="login-form" onSubmit={handleLogin}>
           <div>
             <label>Username:</label>
             <input
@@ -91,15 +92,13 @@ function Login({ onLogin, onLogout }) {
             />
           </div>
           <button type="submit">Login</button>
-          {isLoginFailed && (
-            <p className="error">
-              Login Failed. Please check your credentials.
-            </p>
-          )}
+          {isLoginFailed && <p className="error">Login Failed. Please check your credentials.</p>}
         </form>
       ) : (
         <>
-          <button onClick={handleLogout}>Logout</button>
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
+          </button>
         </>
       )}
     </div>

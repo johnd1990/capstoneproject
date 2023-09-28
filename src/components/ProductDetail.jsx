@@ -1,33 +1,32 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import "../styles/ProductDetail.css";
 
 function ProductDetail({ products, addToCart }) {
   const { id } = useParams();
-
-  // Find the product by ID from the products array
   const product = products.find((product) => product.id === Number(id));
 
   if (!product) {
     return <div>Loading...</div>;
   }
 
-  // Function to handle the "Add to Cart" button click
   const handleAddToCartClick = () => {
-    addToCart(product); // Call the addToCart function passed as a prop
+    addToCart(product);
   };
 
   return (
-    <div>
-      <h2>{product.title}</h2>
-      <p>Price: ${product.price}</p>
-      <p>Category: {product.category}</p>
-      <p>Description: {product.description}</p>
-      <img src={product.image} alt={product.title} />
-
-      {/* Button to add the product to the cart */}
-      <button onClick={handleAddToCartClick}>Add to Cart</button>
-
-      <Link to="/">Back to Products</Link>
+    <div className="product-detail-container">
+      <h2 className="product-detail-title">{product.title}</h2>
+      <p className="product-detail-price">Price: ${product.price}</p>
+      <p className="product-detail-category">Category: {product.category}</p>
+      <p className="product-detail-description">Description: {product.description}</p>
+      <img src={product.image} alt={product.title} className="product-image" />
+      <button onClick={handleAddToCartClick} className="add-to-cart-button">
+        Add to Cart
+      </button>
+      <Link to="/" className="back-to-products-link">
+        Back to Products
+      </Link>
     </div>
   );
 }

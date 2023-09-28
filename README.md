@@ -1,6 +1,6 @@
 # Capstone Project: "Zamazon"
 
-This is a simple React-based e-commerce application that allows users to view a list of products, view product details, log in, and register.
+This is a simple React-based e-commerce application that currently fetches from a fake store API. Most functions in the app are mostly "simulations" at this time, using existing credentials to login and uses local storage to simulate the ability to stay logged in, add to cart (with persistance), and so on.
 
 ## Features
 

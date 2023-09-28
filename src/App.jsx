@@ -15,7 +15,7 @@ import ShoppingCart from "./components/ShoppingCart";
 import ProductSearchBar from "./components/ProductSearchBar";
 import NavigationBar from "./components/NavigationBar";
 import { fetchProducts, login } from "./api/api";
-import "./App.css";
+import "./styles/App.css";
 
 function App() {
   const [originalProducts, setOriginalProducts] = useState([]);
@@ -108,7 +108,7 @@ function App() {
     <Router>
       <div className="banner">
         <img
-          src="https://imgix.ranker.com/user_node_img/50056/1001102891/original/zamazon-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=650"
+          src="https://i.ibb.co/LpTHCfq/zamazon-1.png"
           alt="Banner Image"
           className="banner-image"
         />
