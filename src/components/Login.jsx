@@ -30,12 +30,19 @@ function Login({ onLogin, onLogout }) {
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful! Token:", data.token);
-        setIsLoginSuccessful(true); // Ensure this is setting isLoginSuccessful to true
-        setIsLoginFailed(false);
-        localStorage.setItem("user", JSON.stringify(loginData));
 
-        // Navigate to the home page immediately after successful login
-        navigate("/");
+        // Save user identifier (e.g., username) in local storage
+        localStorage.setItem("user", loginData.username);
+
+        // Check if there is cart data associated with the user
+        const storedCart = JSON.parse(localStorage.getItem(loginData.username));
+        if (storedCart) {
+          // If cart data exists, populate the cart state with it
+          setCart(storedCart);
+        }
+
+        setIsLoginSuccessful(true);
+        setIsLoginFailed(false);
       } else {
         console.error("Login failed");
         setIsLoginSuccessful(false);
@@ -49,15 +56,17 @@ function Login({ onLogin, onLogout }) {
   };
 
   const handleLogout = () => {
+    const username = localStorage.getItem("user");
     localStorage.removeItem("user");
+
+    // Remove the cart data associated with the user
+    localStorage.removeItem(username);
+
     if (onLogout) {
       onLogout();
     }
     setIsLoginSuccessful(false);
-    // Navigate to the login page after logout
-    navigate("/login");
   };
-
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -68,7 +77,8 @@ function Login({ onLogin, onLogout }) {
 
   return (
     <div>
-      <h2 className="login-heading">Login</h2> {/* Add the login-heading class */}
+      <h2 className="login-heading">Login</h2>{" "}
+      {/* Add the login-heading class */}
       {!isLoginSuccessful ? (
         <form className="login-form" onSubmit={handleLogin}>
           <div>
@@ -92,7 +102,11 @@ function Login({ onLogin, onLogout }) {
             />
           </div>
           <button type="submit">Login</button>
-          {isLoginFailed && <p className="error">Login Failed. Please check your credentials.</p>}
+          {isLoginFailed && (
+            <p className="error">
+              Login Failed. Please check your credentials.
+            </p>
+          )}
         </form>
       ) : (
         <>

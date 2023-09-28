@@ -8,8 +8,10 @@ function ShoppingCart({ cart, removeFromCart }) {
   );
 
   useEffect(() => {
+    // Save cart and editedQuantities to localStorage whenever they change
+    localStorage.setItem("cart", JSON.stringify(cart));
     localStorage.setItem("editedQuantities", JSON.stringify(editedQuantities));
-  }, [editedQuantities]);
+  }, [cart, editedQuantities]);
 
   const handleQuantityChange = (productId, event) => {
     const updatedQuantities = { ...editedQuantities };
@@ -30,6 +32,15 @@ function ShoppingCart({ cart, removeFromCart }) {
     return total;
   };
 
+  const handleRemoveFromCart = (productId) => {
+    const updatedCart = cart.filter((product) => product.id !== productId);
+    removeFromCart(productId); // Call the removeFromCart function passed as a prop
+    setEditedQuantities((prevQuantities) => {
+      const { [productId]: _, ...updatedQuantities } = prevQuantities;
+      return updatedQuantities;
+    });
+  };
+
   return (
     <div className="shopping-cart-container">
       <h2 className="shopping-cart-heading">Shopping Cart</h2>
@@ -37,7 +48,11 @@ function ShoppingCart({ cart, removeFromCart }) {
         {cart.map((product) => (
           <li key={product.id} className="cart-item">
             <Link to={`/product/${product.id}`} className="cart-item-link">
-              <img src={product.image} alt={product.title} className="cart-item-image" />
+              <img
+                src={product.image}
+                alt={product.title}
+                className="cart-item-image"
+              />
               {product.title}
             </Link>
             - ${product.price} (Quantity:
@@ -50,7 +65,7 @@ function ShoppingCart({ cart, removeFromCart }) {
             />
             ) Subtotal: ${calculateSubtotal(product).toFixed(2)}{" "}
             <button
-              onClick={() => removeFromCart(product.id)}
+              onClick={() => handleRemoveFromCart(product.id)} // Update to use handleRemoveFromCart
               className="remove-button"
             >
               Remove
@@ -58,7 +73,9 @@ function ShoppingCart({ cart, removeFromCart }) {
           </li>
         ))}
       </ul>
-      <div className="grand-total">Grand Total: ${calculateGrandTotal().toFixed(2)}</div>
+      <div className="grand-total">
+        Grand Total: ${calculateGrandTotal().toFixed(2)}
+      </div>
       <div className="checkout-container">
         <Link to="/checkout" className="checkout-link">
           Proceed to Checkout

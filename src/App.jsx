@@ -14,6 +14,7 @@ import ProductDetail from "./components/ProductDetail";
 import ShoppingCart from "./components/ShoppingCart";
 import ProductSearchBar from "./components/ProductSearchBar";
 import NavigationBar from "./components/NavigationBar";
+import Checkout from "./components/Checkout";
 import { fetchProducts, login } from "./api/api";
 import "./styles/App.css";
 
@@ -27,15 +28,28 @@ function App() {
   const [sortOption] = useState("alphabetical_asc");
   const [filterOption] = useState("");
   const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
-  const [minPrice] = useState(""); // State for minPrice
-  const [maxPrice] = useState(""); // State for maxPrice
+  const [minPrice] = useState("");
+  const [maxPrice] = useState("");
   const [cartQuantity, setCartQuantity] = useState(0);
+  const calculateSubtotal = (product) => {
+    return product.price * product.quantity;
+  };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setIsLoginSuccessful(true);
+    }
+
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || []; // Read the cart from local storage
+    setCart(storedCart);
+  }, []);
 
   useEffect(() => {
     fetchProducts(sortOption, filterOption, minPrice, maxPrice)
       .then((data) => {
-        setOriginalProducts(data); // Store the original products
-        setProducts(data); // Initialize the products state with the original list
+        setOriginalProducts(data);
+        setProducts(data);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -43,7 +57,6 @@ function App() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    // Calculate the total quantity in the cart
     const totalQuantity = cart.reduce(
       (total, product) => total + product.quantity,
       0
@@ -55,7 +68,7 @@ function App() {
     try {
       const response = await login(loginData);
       if (response.ok) {
-        setIsLoginSuccessful(true); // Set login success state
+        setIsLoginSuccessful(true);
         return response;
       } else {
         console.error("Login failed");
@@ -70,6 +83,8 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setIsLoginSuccessful(false);
+    setCart([]); // Clear the cart in state
+    localStorage.removeItem("cart"); // Clear cart from localStorage on logout
   };
 
   const addToCart = (product) => {
@@ -87,15 +102,16 @@ function App() {
     setCart(updatedCart);
     setShowAddedToCartMessage(true);
     setTimeout(() => setShowAddedToCartMessage(false), 3000);
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update local storage
   };
 
   const removeFromCart = (productId) => {
     const updatedCart = cart.filter((product) => product.id !== productId);
     setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update local storage
   };
 
   const handleSearch = (query) => {
-    // Perform filtering based on the search query on the original products list
     const filteredProducts = originalProducts.filter(
       (product) =>
         product.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -114,26 +130,17 @@ function App() {
         />
       </div>
       <div className="App">
-        {/* First Row: Navigation Links */}
         <div className="nav-row">
           <NavigationBar cartQuantity={cartQuantity} />
           {showAddedToCartMessage && <div>Added to Cart!</div>}
         </div>
-
-        {/* Second Row: Search Bar and Filters */}
         <div className="search-row">
           <ProductSearchBar onSearch={handleSearch} />
-          {/* Add the SortFilter component here */}
         </div>
         <Routes>
           <Route
             path="/login"
-            element={
-              <Login
-                onLogin={handleLogin}
-                onLogout={handleLogout} // Pass the logout handler to Login
-              />
-            }
+            element={<Login onLogin={handleLogin} onLogout={handleLogout} />}
           />
           <Route
             path="/"
@@ -142,17 +149,27 @@ function App() {
             }
           />
           <Route
-            path="/shopping-cart" // Updated path
+            path="/shopping-cart"
             element={
               <ShoppingCart cart={cart} removeFromCart={removeFromCart} />
-            } // Updated element
+            }
           />
           <Route path="/registration" element={<Registration />} />
+          <Route
+            path="/checkout"
+            element={
+              <Checkout
+                grandTotal={cart.reduce(
+                  (total, product) => total + calculateSubtotal(product),
+                  0
+                )}
+                cart={cart}
+              />
+            }
+          />
           {!isLoginSuccessful && (
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
           )}
-          {/* Redirect to home page if no matching route */}
-          {/* <Route path="*" element={<Navigate to="/" />} /> */}
           <Route
             path="/product/:id"
             element={
