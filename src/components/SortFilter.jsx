@@ -5,8 +5,8 @@ const SortFilter = ({
   onFilterChange,
   onPriceRangeChange,
 }) => {
-  const [minPriceInput, setMinPriceInput] = useState(""); // Initialize with an empty string
-  const [maxPriceInput, setMaxPriceInput] = useState(""); // Initialize with an empty string
+  const [minPriceInput, setMinPriceInput] = useState("");
+  const [maxPriceInput, setMaxPriceInput] = useState("");
 
   const handleSortChange = (e) => {
     onSortChange(e.target.value);
@@ -58,8 +58,6 @@ const SortFilter = ({
         <option value="electronics">Electronics</option>
         <option value="jewelery">Jewelry</option>
       </select>
-
-      {/* Price range input fields */}
       <div className="price-range">
         <label htmlFor="minPrice">Min Price: </label>
         <input

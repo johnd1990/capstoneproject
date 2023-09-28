@@ -54,7 +54,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* Align items to the start (left) by default */
 }
 
 .grand-total {

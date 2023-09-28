@@ -6,10 +6,12 @@ function ProductDetail({ products, addToCart }) {
   const { id } = useParams();
   const product = products.find((product) => product.id === Number(id));
 
+  // If the product is not found, return a loading message
   if (!product) {
     return <div>Loading...</div>;
   }
 
+  // Define event handler for add to cart button
   const handleAddToCartClick = () => {
     addToCart(product);
   };
