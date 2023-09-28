@@ -83,8 +83,8 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setIsLoginSuccessful(false);
-    setCart([]); // Clear the cart in state
-    localStorage.removeItem("cart"); // Clear cart from localStorage on logout
+    setCart([]);
+    localStorage.removeItem("cart");
   };
 
   const addToCart = (product) => {
@@ -102,13 +102,13 @@ function App() {
     setCart(updatedCart);
     setShowAddedToCartMessage(true);
     setTimeout(() => setShowAddedToCartMessage(false), 3000);
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update local storage
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const removeFromCart = (productId) => {
     const updatedCart = cart.filter((product) => product.id !== productId);
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update local storage
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const handleSearch = (query) => {

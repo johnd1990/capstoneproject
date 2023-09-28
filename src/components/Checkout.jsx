@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../styles/Checkout.css";
 
 function Checkout({ grandTotal }) {
+    // Define state for user information
   const [userInfo, setUserInfo] = useState({
     name: "",
     address: "",
@@ -10,12 +11,14 @@ function Checkout({ grandTotal }) {
     phone: "",
   });
 
+  // Define state for credit card information
   const [creditCardInfo, setCreditCardInfo] = useState({
     cardNumber: "",
     expirationDate: "",
     cvv: "",
   });
 
+  // Define event handlers for user information and credit card information
   const handleUserInfoChange = (event) => {
     const { name, value } = event.target;
     setUserInfo((prevData) => ({
@@ -24,6 +27,7 @@ function Checkout({ grandTotal }) {
     }));
   };
 
+  // Define event handlers for user information and credit card information
   const handleCreditCardChange = (event) => {
     const { name, value } = event.target;
     setCreditCardInfo((prevData) => ({
@@ -32,6 +36,7 @@ function Checkout({ grandTotal }) {
     }));
   };
 
+  // Define event handler for place order button
   return (
     <div className="checkout-page-container">
       <h2 className="checkout-heading">Checkout</h2>

@@ -7,8 +7,8 @@ function ProductList({ products, onAddToCart }) {
   const [sortedProducts, setSortedProducts] = useState([]);
   const [sortOption, setSortOption] = useState("alphabetical_asc");
   const [filterOption, setFilterOption] = useState("");
-  const [minPrice, setMinPrice] = useState(""); // State for minPrice
-  const [maxPrice, setMaxPrice] = useState(""); // State for maxPrice
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   // Define handleSortChange function
   const handleSortChange = (sort) => {
